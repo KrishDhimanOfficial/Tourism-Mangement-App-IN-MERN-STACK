@@ -47,11 +47,13 @@
                                             <label for="location_img" class="form-label">Image</label>
                                             <input type="file" name="featured_img" class="form-control" id="Input_img">
                                         </div>
+                                        <p class="mb-0 mt-2"> File size must be less than 1MB!</p>
                                         <div class="col-12">
                                             <label for="textInput" class="form-label">Location</label>
                                             <input type="text" name="location_name" class="form-control" id="textInput"
                                                 required>
                                         </div>
+                                        <%- include('../partials/alert') %>
                                         <div class="d-flex gap-2 align-items-center justify-content-center">
                                            <%- include('../partials/formLoader') %>
                                             <button type="submit" class="btn btn-primary submitbtn">Submit</button>

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
+import multer from 'multer'
 import cluster from 'cluster'
 import numCPUs from 'os'
 import connectDB from './config/mongodb.connection.js'

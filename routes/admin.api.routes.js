@@ -3,40 +3,56 @@ import authenticateControllers from '../Controllers/authentication.controllers.j
 import productControllers from '../Controllers/product.contollers.js'
 import admincontrollers from '../Controllers/admin.controllers.js'
 import postControllers from '../Controllers/post.controllers.js'
-import { tour_location, tour_category, post_category } from '../Middleware/multer.middleware.js'
+import CheckmulterError from '../Middleware/handleMulterError.js'
+import { tour_location, tour_category, post_category, post } from '../Middleware/multer.middleware.js'
 
 const router = express.Router()
 
 router.post('/login', authenticateControllers.getAuthenticate)
 router.get('/dashboard', admincontrollers.getAdminDashboard)
 
+
 router.get('/tour/location', (req, res) => res.render('product/tour_location'))
 router.get('/tour/category', (req, res) => res.render('product/category'))
+router.get('/tour', productControllers.renderTourPage)
 
 router.get('/post/category', (req, res) => res.render('post/category'))
+router.get('/posts', postControllers.renderPostPage)
 
 // API Routes for Tour Location
 router.get('/api/tour/location', productControllers.getTourLocations)
 router.route('/api/tour/location/:id?')
-    .post(tour_location.single('featured_img'), productControllers.createLoaction)
+    .post(tour_location.single('featured_img'), CheckmulterError, productControllers.createLoaction)
     .get(productControllers.getsingleTourLocation)
-    .put(tour_location.single('featured_img'), productControllers.updateTourLocation)
+    .put(tour_location.single('featured_img'), CheckmulterError, productControllers.updateTourLocation)
     .delete(productControllers.deleteTourLocation)
+
 
 //  API Routes for Tour Category
 router.get('/api/tour/category', productControllers.getTourCategories)
 router.route('/api/tour/category/:id?')
-    .post(tour_category.single('featured_image'), productControllers.createTourCategory)
+    .post(tour_category.single('featured_image'), CheckmulterError, productControllers.createTourCategory)
     .get(productControllers.getsingleTourCategory)
-    .put(tour_category.single('featured_image'), productControllers.updateTourCategory)
+    .put(tour_category.single('featured_image'), CheckmulterError, productControllers.updateTourCategory)
     .delete(productControllers.deleteTourCategory)
+
 
 // API Routes for Post Category
 router.get('/api/post/categories', postControllers.getPostCategories)
 router.route('/api/posts/category/:id?')
-    .post(post_category.single('featured_image'), postControllers.createPostCategory)
+    .post(post_category.single('featured_image'), CheckmulterError, postControllers.createPostCategory)
     .get(postControllers.getSinglePostCategory)
-    .put(post_category.single('featured_image'), postControllers.updatePostCategory)
+    .put(post_category.single('featured_image'),CheckmulterError, postControllers.updatePostCategory)
     .delete(postControllers.deletePostCategory)
 
+
+// API Routes for Posts
+router.get('/api/posts', postControllers.getPosts)
+router.route('/api/post/:id?')
+    .post(post.single('post_image'),CheckmulterError, postControllers.createPost)
+    .get(postControllers.getSinglePost)
+    .put(post.single('post_image'),CheckmulterError, postControllers.updatePost)
+    .delete(postControllers.deletePost)
+
+    
 export default router

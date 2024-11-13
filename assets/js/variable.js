@@ -6,8 +6,8 @@ export const dataID = document.querySelector('#updateID')
 export const textInput = document.querySelector('#textInput')
 export const ResetForm = document.querySelector('.reset')
 export const Loader = document.querySelector('#loader')
-const FormLoader = document.querySelector('#formLoader')
-
+export const FormLoader = document.querySelector('#formLoader')
+export const ErrorAlert = document.querySelector('#errorAlert')
 
 
 // This Function Set Input Field
@@ -15,6 +15,10 @@ export const setFormField = (text, id, url) => {
     textInput.value = text;
     dataID.value = id;
     previewImg.src = url;
+}
+
+export function createSlug(str) {
+    return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 // This Function Get the All the Data
@@ -27,19 +31,25 @@ export const getdata = async (url) => {
 // Function that send POST AND PUT data to server
 export const sendDataToServer = async (url, method, formData) => {
     try {
-        FormLoader.style.display = 'block';  
+        FormLoader.style.display = 'block';
         const response = await fetch(url, {
             method: method,
-            body: formData
+            body: formData,
         })
-        
         const data = await response.json()
-        if (data) {
-            FormLoader.style.display = 'none';
-            return data
+
+        if (!response.ok) {
+            ErrorAlert.style.display = 'block';
+            ErrorAlert.innerHTML = data.error;
+            return;
+        } else {
+            ErrorAlert.style.display = 'none';
+            return true
         }
     } catch (error) {
-        console.log('sendDataToServer : ' + error.message)
+        console.error(error)
+    } finally {
+        FormLoader.style.display = 'none';
     }
 }
 

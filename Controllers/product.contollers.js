@@ -4,10 +4,20 @@ import tourCategoryModel from '../models/product_category.model.js'
 import deleteImage from '../services/deleteImg.js'
 
 const productControllers = {
+    renderTourPage: async (req, res) => {
+        try {
+            const tour_locations = await tourLocationModel.find({}, { location_name: 1 })
+            const tour_categories = await tourCategoryModel.find({}, { category_name: 1 })
+            return res.render('product/tour', { tour_locations, tour_categories })
+        } catch (error) {
+            console.log('renderTourPage : ' + error.message)
+        }
+    },
     createLoaction: async (req, res) => {
         try {
+            if (!req.file) return res.status(400).json({ error: 'Please upload a image' })
             const checkTourLocationExists = await tourLocationModel.findOne(
-                { location_name: { $regex: /^req.body.location_name$/, $options: 'i' } }
+                { location_name: { $regex: `^${req.body.location_name}$`, $options: 'i' } }
             )
             if (checkTourLocationExists) {
                 await deleteImage(`tour_location_images/${req.file.filename}`)
@@ -78,8 +88,9 @@ const productControllers = {
     },
     createTourCategory: async (req, res) => {
         try {
+            if (!req.file) return res.status(400).json({ error: 'Please upload a image' })
             const checkTourCategoryExists = await tourCategoryModel.findOne({
-                category_name: { $regex: /^req.body.category_name$/, $options: 'i' }
+                category_name: { $regex: `^${req.body.category_name}$`, $options: 'i' }
             })
             if (checkTourCategoryExists) {
                 await deleteImage(`tour_category_images/${req.file.filename}`)
