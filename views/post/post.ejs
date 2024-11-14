@@ -47,23 +47,33 @@
                                             <div class="col-lg-6">
                                                 <div class="col-12 mb-2">
                                                     <label for="slugcreate" class="form-label">Title</label>
-                                                    <input type="text" name="title" class="form-control" id="slugcreate">
+                                                    <input type="text" name="title" class="form-control title"
+                                                        id="slugcreate" required>
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="slug" class="form-label">Slug</label>
-                                                    <input type="text" name="post_slug" class="form-control"
-                                                        id="slug">
+                                                    <input type="text" name="post_slug" class="form-control" id="slug"
+                                                        required>
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="postcategory" class="form-label">Category</label>
-                                                    <select id="postcategory" class="form-select"
-                                                        name="post_category_id" aria-label="Default select example">
-                                                        <option selected disabled>category</option>
+                                                    <select id="categorySelectBox" class="form-select"
+                                                        name="post_category_id" aria-label="Default select example"
+                                                        required>
+                                                        <option selected="true" disabled>category</option>
                                                         <% categories?.forEach(category=> { %>
                                                             <option value="<%= category._id %>">
                                                                 <%= category.category_name %>
                                                             </option>
                                                             <% }) %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-12 mb-2">
+                                                    <label for="status" class="form-label">Status</label>
+                                                    <select id="status" class="form-select" name="status"
+                                                        aria-label="Default select example" required>
+                                                        <option selected value="true">Active</option>
+                                                        <option value="false">Draft</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-12 mb-2">

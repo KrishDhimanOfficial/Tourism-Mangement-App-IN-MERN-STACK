@@ -47,17 +47,16 @@
                                             <div class="col-lg-6">
                                                 <div class="col-12 mb-2">
                                                     <label for="title" class="form-label">Title</label>
-                                                    <input type="text" name="title" class="form-control"
-                                                        id="title">
+                                                    <input type="text" name="title" class="form-control" id="title">
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="slug" class="form-label">Slug</label>
-                                                    <input type="text" name="slug" class="form-control"
-                                                        id="slug">
+                                                    <input type="text" name="slug" class="form-control" id="slug">
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="product_category_id" class="form-label">Category</label>
-                                                    <select id="product_category_id" class="form-select" name="product_category_id" aria-label="Default select example">
+                                                    <select id="product_category_id" class="form-select"
+                                                        name="product_category_id" aria-label="Default select example">
                                                         <option selected disabled>Select Category</option>
                                                         <% tour_categories?.forEach(category=> { %>
                                                             <option value="<%= category._id %>">
@@ -68,7 +67,8 @@
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="product_location_id" class="form-label">Location</label>
-                                                    <select id="product_location_id" class="form-select" name="product_location_id" aria-label="Default select example">
+                                                    <select id="product_location_id" class="form-select"
+                                                        name="product_location_id" aria-label="Default select example">
                                                         <option selected disabled>Select Location</option>
                                                         <% tour_locations?.forEach(location=> { %>
                                                             <option value="<%= location._id %>">
@@ -79,8 +79,9 @@
                                                 </div>
                                                 <div class="col-12 mb-2">
                                                     <label for="category_img" class="form-label">Image</label>
-                                                    <input type="file" name="featured_image" class="form-control"
-                                                        id="Input_img">
+                                                    <input type="text" name="featured_image" hidden>
+                                                    <input type="file" name="product_images" multiple
+                                                        class="form-control" id="Input_img">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6">
@@ -134,62 +135,62 @@
                                                 <th scope="col">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="post-table">
+                                        <tbody id="">
                                             <%- include('../partials/loader') %>
-                                            <tr>
-                                                <td>Grace Bishop</td>
-                                                <td>8340</td>
-                                                <td>Rodez</td>
-                                                <td>Rodez</td>
-                                                <td>2012/02/10</td>
-                                                <td>4%</td>
-                                                <td>4%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Haviva Hernandez</td>
-                                                <td>8136</td>
-                                                <td>Suwałki</td>
-                                                <td>2000/30/01</td>
-                                                <td>2000/30/01</td>
-                                                <td>16%</td>
-                                                <td>16%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Alisa Horn</td>
-                                                <td>9853</td>
-                                                <td>Ucluelet</td>
-                                                <td>Ucluelet</td>
-                                                <td>2007/01/11</td>
-                                                <td>39%</td>
-                                                <td>39%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Zelenia Roman</td>
-                                                <td>7516</td>
-                                                <td>Redwater</td>
-                                                <td>Redwater</td>
-                                                <td>2012/03/03</td>
-                                                <td>31%</td>
-                                                <td>31%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Zelenia Roman</td>
-                                                <td>7516</td>
-                                                <td>Redwater</td>
-                                                <td>Redwater</td>
-                                                <td>2012/03/03</td>
-                                                <td>31%</td>
-                                                <td>31%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Zelenia Roman</td>
-                                                <td>7516</td>
-                                                <td>Redwater</td>
-                                                <td>Redwater</td>
-                                                <td>2012/03/03</td>
-                                                <td>31%</td>
-                                                <td>31%</td>
-                                            </tr>
+                                                <tr>
+                                                    <td>Grace Bishop</td>
+                                                    <td>8340</td>
+                                                    <td>Rodez</td>
+                                                    <td>Rodez</td>
+                                                    <td>2012/02/10</td>
+                                                    <td>4%</td>
+                                                    <td>4%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Haviva Hernandez</td>
+                                                    <td>8136</td>
+                                                    <td>Suwałki</td>
+                                                    <td>2000/30/01</td>
+                                                    <td>2000/30/01</td>
+                                                    <td>16%</td>
+                                                    <td>16%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Alisa Horn</td>
+                                                    <td>9853</td>
+                                                    <td>Ucluelet</td>
+                                                    <td>Ucluelet</td>
+                                                    <td>2007/01/11</td>
+                                                    <td>39%</td>
+                                                    <td>39%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Zelenia Roman</td>
+                                                    <td>7516</td>
+                                                    <td>Redwater</td>
+                                                    <td>Redwater</td>
+                                                    <td>2012/03/03</td>
+                                                    <td>31%</td>
+                                                    <td>31%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Zelenia Roman</td>
+                                                    <td>7516</td>
+                                                    <td>Redwater</td>
+                                                    <td>Redwater</td>
+                                                    <td>2012/03/03</td>
+                                                    <td>31%</td>
+                                                    <td>31%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Zelenia Roman</td>
+                                                    <td>7516</td>
+                                                    <td>Redwater</td>
+                                                    <td>Redwater</td>
+                                                    <td>2012/03/03</td>
+                                                    <td>31%</td>
+                                                    <td>31%</td>
+                                                </tr>
                                         </tbody>
                                     </table>
                                     <!-- End Table with stripped rows -->

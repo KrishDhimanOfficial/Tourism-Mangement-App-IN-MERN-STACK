@@ -4,7 +4,7 @@ import productControllers from '../Controllers/product.contollers.js'
 import admincontrollers from '../Controllers/admin.controllers.js'
 import postControllers from '../Controllers/post.controllers.js'
 import CheckmulterError from '../Middleware/handleMulterError.js'
-import { tour_location, tour_category, post_category, post } from '../Middleware/multer.middleware.js'
+import { tour_location, tour_category, post_category, post, tour } from '../Middleware/multer.middleware.js'
 
 const router = express.Router()
 
@@ -42,17 +42,26 @@ router.get('/api/post/categories', postControllers.getPostCategories)
 router.route('/api/posts/category/:id?')
     .post(post_category.single('featured_image'), CheckmulterError, postControllers.createPostCategory)
     .get(postControllers.getSinglePostCategory)
-    .put(post_category.single('featured_image'),CheckmulterError, postControllers.updatePostCategory)
+    .put(post_category.single('featured_image'), CheckmulterError, postControllers.updatePostCategory)
     .delete(postControllers.deletePostCategory)
 
 
 // API Routes for Posts
 router.get('/api/posts', postControllers.getPosts)
 router.route('/api/post/:id?')
-    .post(post.single('post_image'),CheckmulterError, postControllers.createPost)
+    .post(post.single('post_image'), CheckmulterError, postControllers.createPost)
     .get(postControllers.getSinglePost)
-    .put(post.single('post_image'),CheckmulterError, postControllers.updatePost)
+    .put(post.single('post_image'), CheckmulterError, postControllers.updatePost)
     .delete(postControllers.deletePost)
+
+
+// API Routes for Tours
+router.get('/api/tours', productControllers.getAllTours)
+router.route('/api/tour/:id?')
+    .post(tour.array('product_images'), productControllers.createTour)
+    .get(productControllers.getSingleTour)
+    .put(tour.array('product_images'), productControllers.updateTour)
+    .delete(productControllers.deleteTour)
 
     
 export default router

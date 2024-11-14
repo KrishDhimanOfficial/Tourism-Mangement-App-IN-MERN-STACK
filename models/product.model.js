@@ -46,6 +46,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
+    featured_image:{
+        type: mongoose.Schema.Types.String,
+        required: true,
+    },
     product_images: {
         type: mongoose.Schema.Types.Array,
         required: true

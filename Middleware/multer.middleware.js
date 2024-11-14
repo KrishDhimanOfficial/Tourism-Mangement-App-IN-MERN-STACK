@@ -45,3 +45,8 @@ export const post = multer({
     limits: { fileSize: MAX_SIZE },
     fileFilter: fileFilter
 })
+export const tour = multer({
+    storage: createStorage('tour_images'),
+    limits: { fileSize: MAX_SIZE },
+    fileFilter: fileFilter
+})

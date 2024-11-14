@@ -158,6 +158,42 @@ const productControllers = {
         } catch (error) {
             console.log('deleteTourCategory : ' + error.message)
         }
+    },
+    getAllTours: async (req, res) => {
+        try {
+
+        } catch (error) {
+            console.log('getAllTours : ' + error.message)
+        }
+    },
+    createTour: async (req, res) => {
+        try {
+
+        } catch (error) {
+            console.log('createTour : ' + error.message)
+        }
+    },
+    getSingleTour: async (req, res) => {
+        try {
+
+        } catch (error) {
+            console.log('getSingleTour : ' + error.message)
+        }
+    },
+    updateTour: async (req, res) => {
+        try {
+
+        } catch (error) {
+            console.log('updateTour : ' + error.message)
+        }
+    },
+    deleteTour: async (req, res) => {
+        try {
+
+        } catch (error) {
+            console.log('deleteTour : ' + error.message)
+        }
     }
+
 }
 export default productControllers

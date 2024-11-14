@@ -2,6 +2,8 @@ import config from '../config/config.js'
 import deleteImage from '../services/deleteImg.js'
 import postcategoryModel from '../models/post.category.model.js'
 import postModel from '../models/post.model.js'
+import mongoose from 'mongoose'
+const ObjectId = mongoose.Types.ObjectId;
 
 const postControllers = {
     renderPostPage: async (req, res) => {
@@ -118,11 +120,10 @@ const postControllers = {
     },
     createPost: async (req, res) => {
         try {
-            console.log(req.body);
             if (!req.file || !req.body) return res.status(400).json({ error: 'All Field Are Required' })
-            const { title, post_slug, description, post_category_id } = req.body;
+            const { title, post_slug, status, description, post_category_id } = req.body;
             const data = await postModel.create({
-                title, description,
+                title, description, status,
                 post_slug: post_slug[1],
                 post_image: req.file.filename,
                 createdAt: new Date(),
@@ -140,10 +141,10 @@ const postControllers = {
     },
     getSinglePost: async (req, res) => {
         try {
-            const singlePost = await postModel.aggregate([
+            const post = await postModel.aggregate([
                 {
                     $match: {
-                        _id: new Object(req.params.id)
+                        _id: new ObjectId(req.params.id)
                     }
                 },
                 {
@@ -156,14 +157,29 @@ const postControllers = {
                 },
                 { $unwind: '$category' }
             ])
-            return res.status(200).json({ singlePost, post_img_url: config.server_post_img_url })
+            return res.status(200).json({ singlePost: post[0], post_img_url: config.server_post_img_url })
         } catch (error) {
             console.log('getSinglePost : ' + error.message)
         }
     },
     updatePost: async (req, res) => {
         try {
-
+            const image = req.file?.filename;
+            const previousimg = await postModel.findById({ _id: req.params.id })
+            if (image) deleteImage(`post_images/${previousimg.featured_image}`)
+            const { title, post_slug, status, description, post_category_id } = req.body;
+            const data = await postModel.findByIdAndUpdate(
+                { _id: req.params.id },
+                {
+                    title, description, status,
+                    post_slug: post_slug[1],
+                    post_image: req.file?.filename,
+                    post_category_id: new Object(post_category_id)
+                },
+                { new: true }
+            )
+            if (!data) return res.status(204).json({ error: 'failed' })
+            return res.status(200).json({ message: 'updated' })
         } catch (error) {
             console.log('updatePost : ' + error.message)
         }

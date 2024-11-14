@@ -8,7 +8,21 @@ export const ResetForm = document.querySelector('.reset')
 export const Loader = document.querySelector('#loader')
 export const FormLoader = document.querySelector('#formLoader')
 export const ErrorAlert = document.querySelector('#errorAlert')
+export const SelectBox = document.querySelector('#categorySelectBox')
 
+
+export const setPostField = (res) => {
+    dataID.value = res.singlePost._id;
+    document.querySelector('.title').value = res.singlePost.title;
+    document.querySelector('#slug').value = res.singlePost.post_slug;
+    document.querySelector('.ql-editor').innerHTML = res.singlePost.description;
+    SelectBox.childNodes.forEach(option => {
+        if (option.value === res.singlePost.category._id) {
+            option.selected = true;
+        }
+    })
+    previewImg.src = `${res.post_img_url}/${res.singlePost.post_image}`
+}
 
 // This Function Set Input Field
 export const setFormField = (text, id, url) => {
@@ -18,12 +32,14 @@ export const setFormField = (text, id, url) => {
 }
 
 export function createSlug(str) {
-    return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return str.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
 }
 
 // This Function Get the All the Data
 export const getdata = async (url) => {
-    const response = await fetch(url)
+    const response = await fetch(url, { method: 'GET' })
     const data = await response.json()
     return data;
 }
@@ -71,7 +87,7 @@ export const deleteDataRequestToServer = async (e, url) => {
     try {
         const response = await fetch(url, { method: 'DELETE' })
         const data = await response.json()
-        if (data.message == "successfully deleted") {
+        if (data.message) {
             e.target.closest('.table-row').remove()
         }
     } catch (error) {

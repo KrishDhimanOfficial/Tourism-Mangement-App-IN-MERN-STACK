@@ -1,14 +1,14 @@
 import {
     server_url, FormLoader, ErrorAlert, Formbtn, previewImg, Loader, ResetForm, dataID, Input_img,
-    displayPreviewImage, getdata, deleteDataRequestToServer, getSingleData, setFormField,
-    sendDataToServer, createSlug
+    displayPreviewImage,SelectBox, getdata, deleteDataRequestToServer, getSingleData, setFormField,
+    sendDataToServer, createSlug, setPostField
 } from './variable.js'
 
 const tour_location_table = document.querySelector('#tour-location-table')
 const tour_category_table = document.querySelector('#tour-category-table')
 const post_category_table = document.querySelector('#post-category-table')
 const posts_table = document.querySelector('#post-table')
-const description = document.querySelector('.ql-editor')?.getHTML()
+const description = document.querySelector('.ql-editor')
 
 printTourLocation() // Function That's print tour location on DOM
 printTourCategory() // Function That's print tour Category on DOM
@@ -23,6 +23,12 @@ ResetForm.onclick = () => {
     dataID.value = '';
     ErrorAlert.style.display = 'none';
     previewImg.src = '/assets/images/upload_area.png';
+    SelectBox.childNodes.forEach(option => {
+        if (option.value !== 'category') {
+            option.selected = false;
+        }
+    })
+    if (description) description.innerHTML = ''; // This will clear the content of the editor
 } // It's reset the State
 
 Formbtn.onsubmit = async (e) => {
@@ -33,7 +39,7 @@ Formbtn.onsubmit = async (e) => {
 
     if (EndURL === 'api/post') {
         formData.append('post_slug', createSlug(`${slug.value}`))
-        formData.append('description', description)
+        formData.append('description', description.getHTML())
     }
 
     const response = await sendDataToServer(url, method, formData)
@@ -56,7 +62,6 @@ Formbtn.onsubmit = async (e) => {
             posts_table.innerHTML = '';
             printPosts()
         }
-        Formbtn.id == 'submitForm';
         FormLoader.style.display = 'none';
     }
 }
@@ -184,7 +189,7 @@ posts_table ? posts_table.onclick = async (e) => {
     if (e.target.closest('.edit')) {
         Formbtn.id = 'updateFormData';
         const res = await getSingleData(`${server_url}/${EndURL}/${e.target.dataset.id}`)
-        console.log(res)
+        setPostField(res)
     }
 }
     : null
