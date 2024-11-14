@@ -1,36 +1,73 @@
 import {
-    server_url, FormLoader, ErrorAlert, Formbtn, previewImg, Loader, ResetForm, dataID, Input_img,
-    displayPreviewImage,SelectBox, getdata, deleteDataRequestToServer, getSingleData, setFormField,
-    sendDataToServer, createSlug, setPostField
+    server_url, FormLoader, ErrorAlert, Formbtn, previewImg, Loader, ResetForm, dataID,
+    Input_img, displayPreviewImage, SelectBox, multipleImagesInput,
+    getdata, deleteDataRequestToServer, getSingleData, setFormField,
+    sendDataToServer, createSlug, setPostField, displayPreviewImages, createTags
 } from './variable.js'
 
 const tour_location_table = document.querySelector('#tour-location-table')
 const tour_category_table = document.querySelector('#tour-category-table')
 const post_category_table = document.querySelector('#post-category-table')
 const posts_table = document.querySelector('#post-table')
-const description = document.querySelector('.ql-editor')
+const tours_table = document.querySelector('#tour_table')
+const description = document.querySelectorAll('.ql-editor')[0]
+const travellingPlan = document.querySelectorAll('.ql-editor')[1]
+const tour_included = document.querySelector('#included')
+const tour_excluded = document.querySelector('#excluded')
+const createIncludedTag = document.querySelector('.createIncludedTag')
+const createExcludedTag = document.querySelector('.createExcludedTag')
+const tagscontainer = document.querySelector('.tourTags')
 
 printTourLocation() // Function That's print tour location on DOM
 printTourCategory() // Function That's print tour Category on DOM
 printPostCategory() // Function That's print Post Category on DOM
 printPosts() // Function That's print Post on DOM
+// printToursData() // Function That's print Tour ON DOM
 
-Input_img.onchange = (e) => { displayPreviewImage(e) } // display preview image on screen
+//  preview image on screen
+if (Input_img) Input_img.onchange = (e) => {
+    displayPreviewImage(e)
+}
+//  preview images on screen
+if (multipleImagesInput) multipleImagesInput.onchange = (e) => {
+    displayPreviewImages(e)
+}
+// Inject Tour Included Tags 
+if (tour_included) createIncludedTag.onclick = () => {
+    if (tour_included.value) {
+        const tag = createTags(tour_included.value.trim())
+        document.querySelector('#tourIncludedTags').insertAdjacentHTML('afterbegin', tag)
+        tour_included.value = '';
+    }
+}
+// Inject Tour Excluded Tags 
+if (tour_excluded) createExcludedTag.onclick = () => {
+    if (tour_excluded.value) {
+        const tag = createTags(tour_excluded.value.trim())
+        document.querySelector('#tourexcludedTags').insertAdjacentHTML('afterbegin', tag)
+        tour_excluded.value = '';
+    }
+}
+// Delete Tour Tags
+if (tagscontainer) tagscontainer.onclick = (e) => {
+    e.target.closest('.deleteTag') ? e.target.closest('.deleteTag').remove() : null
+}
 
+// It's reset the Form State
 ResetForm.onclick = () => {
     FormLoader.style.display = 'none';
     Formbtn.id = 'submitForm';
     dataID.value = '';
     ErrorAlert.style.display = 'none';
     previewImg.src = '/assets/images/upload_area.png';
-    SelectBox.childNodes.forEach(option => {
-        if (option.value !== 'category') {
-            option.selected = false;
-        }
+
+    if (SelectBox) SelectBox.childNodes.forEach(option => {
+        option.value !== 'category' ? option.selected = false : null
     })
     if (description) description.innerHTML = ''; // This will clear the content of the editor
-} // It's reset the State
+} 
 
+// Handle Form POST and PUT Operation
 Formbtn.onsubmit = async (e) => {
     e.preventDefault()
     const method = Formbtn.id === 'submitForm' ? 'POST' : 'PUT';
@@ -40,6 +77,11 @@ Formbtn.onsubmit = async (e) => {
     if (EndURL === 'api/post') {
         formData.append('post_slug', createSlug(`${slug.value}`))
         formData.append('description', description.getHTML())
+    }
+    if (EndURL === 'api/tour') {
+        formData.append('slug',createSlug(`${slug.value}`))
+        formData.append('description', description.getHTML())
+        formData.append('travelling_plan', travellingPlan.getHTML())
     }
 
     const response = await sendDataToServer(url, method, formData)
@@ -61,6 +103,10 @@ Formbtn.onsubmit = async (e) => {
         if (posts_table) {
             posts_table.innerHTML = '';
             printPosts()
+        }
+        if (tours_table) {
+            tours_table.innerHTML = '';
+            // printToursData()
         }
         FormLoader.style.display = 'none';
     }
@@ -165,7 +211,7 @@ async function printPostCategory() {
         <th scope="row">${i + 1}</th>
             <td>
                 <img src="${data.post_category_img_url}/${category.featured_image}"
-                    style="width: 100px; height: 100px;" alt="" loading='lazy'>
+                    style="width: 100px;height: 100px; object-fit: cover;" alt="" loading='lazy'>
             </td>
             <td> ${category.category_name}</td>
             <td>
@@ -221,3 +267,8 @@ async function printPosts() {
     if (posts_table) posts_table.insertAdjacentHTML('afterbegin', structure)
     Loader.style.display = 'none';
 }
+
+// This Function Print the Tours Data on DOM
+// async function printToursData() {
+    
+// }

@@ -28,7 +28,6 @@ a:hover {
   color: #717ff5;
   text-decoration: none;
 }
-
 h1,
 h2,
 h3,
@@ -36,6 +35,13 @@ h4,
 h5,
 h6 {
   font-family: "Nunito", sans-serif;
+}
+
+.images {
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
+  object-fit: cover;
 }
 
 /*--------------------------------------------------------------

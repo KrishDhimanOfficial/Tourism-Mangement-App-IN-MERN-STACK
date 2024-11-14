@@ -1,6 +1,7 @@
 import config from '../config/config.js'
 import tourLocationModel from '../models/tour_location.model.js'
 import tourCategoryModel from '../models/product_category.model.js'
+import tourModel from '../models/product.model.js'
 import deleteImage from '../services/deleteImg.js'
 
 const productControllers = {
@@ -161,7 +162,8 @@ const productControllers = {
     },
     getAllTours: async (req, res) => {
         try {
-
+            const tours = await tourModel.find({})
+            if (tours) return res.status(200).json({ tours, tour_img_url: config.server_tour_img_url })
         } catch (error) {
             console.log('getAllTours : ' + error.message)
         }
@@ -189,7 +191,15 @@ const productControllers = {
     },
     deleteTour: async (req, res) => {
         try {
-
+            const data = await tourModel.findById({ _id: req.params.id })
+            const response = await tourModel.findByIdAndDelete({ _id: req.params.id })
+            if (data && response) {
+                deleteImage(`tour_images/${data.featured_image}`)
+                response.product_images.forEach(async (image) => {
+                    await deleteImage(`tour_images/${image}`)
+                })
+                return res.status(200).json({ message: 'successfully deleted' })
+            }
         } catch (error) {
             console.log('deleteTour : ' + error.message)
         }

@@ -2,6 +2,8 @@ export const server_url = `http://localhost:8000/admin`;
 export const Formbtn = document.querySelector('#submitForm')
 export const previewImg = document.querySelector('#preview_featured_img')
 export const Input_img = document.querySelector('#Input_img')
+export const multipleImagesInput = document.querySelector('#multipleImagesInput')
+export const previewMultipleImage = document.querySelector('#previewMultipleImage')
 export const dataID = document.querySelector('#updateID')
 export const textInput = document.querySelector('#textInput')
 export const ResetForm = document.querySelector('.reset')
@@ -98,11 +100,40 @@ export const deleteDataRequestToServer = async (e, url) => {
 // Function that display preview image
 export const displayPreviewImage = async (e) => {
     const file = e.target.files[0]
-    if (file) {
-        const reader = new FileReader()
-        reader.onload = () => {
-            previewImg.src = reader.result;
-        }
-        reader.readAsDataURL(file)
+    const reader = new FileReader()
+    reader.onload = () => previewImg.src = reader.result;
+    reader.readAsDataURL(file)
+}
+
+// Function that display preview multiple images
+export const displayPreviewImages = (e) => {
+    const alert = document.querySelector('#imagesAlert')
+    previewMultipleImage.innerHTML = '';
+    previewImg.style.display = 'none';
+    const files = e.target.files;
+
+    if (Array.from(files).length > 5) {
+        previewImg.style.display = 'block';
+        alert.style.display = 'block';
     }
+    else {
+        Array.from(files).forEach(file => {
+            const reader = new FileReader()
+            const ImgTag = document.createElement('img')
+            reader.onload = () => {
+                ImgTag.src = reader.result;
+                ImgTag.classList.add('images')
+            }
+            reader.readAsDataURL(file)
+            previewMultipleImage.appendChild(ImgTag)
+        })
+    }
+}
+
+//  Function That's create Tags
+export const createTags = (tag) => {
+    const tagElement = `<div class="deleteTag btn bg-body-secondary tag">${tag}
+    <button type="submit" class="btn p-0 ms-2">
+    <i class="bi bi-x"></i></button></div>`
+    return tagElement
 }
