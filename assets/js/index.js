@@ -1,6 +1,6 @@
 import {
     server_url, FormLoader, ErrorAlert, Formbtn, previewImg, Loader, ResetForm, dataID,
-    Input_img, displayPreviewImage, SelectBox, multipleImagesInput,
+    Input_img, displayPreviewImage, SelectBox, multipleImagesInput, previewMultipleImage,
     getdata, deleteDataRequestToServer, getSingleData, setFormField,
     sendDataToServer, createSlug, setPostField, displayPreviewImages, createTags
 } from './variable.js'
@@ -18,11 +18,14 @@ const createIncludedTag = document.querySelector('.createIncludedTag')
 const createExcludedTag = document.querySelector('.createExcludedTag')
 const tagscontainer = document.querySelector('.tourTags')
 
+let excludedTagsArray = []
+let includedTagsArray = []
+
 printTourLocation() // Function That's print tour location on DOM
 printTourCategory() // Function That's print tour Category on DOM
 printPostCategory() // Function That's print Post Category on DOM
 printPosts() // Function That's print Post on DOM
-// printToursData() // Function That's print Tour ON DOM
+printToursData() // Function That's print Tour ON DOM
 
 //  preview image on screen
 if (Input_img) Input_img.onchange = (e) => {
@@ -35,6 +38,7 @@ if (multipleImagesInput) multipleImagesInput.onchange = (e) => {
 // Inject Tour Included Tags 
 if (tour_included) createIncludedTag.onclick = () => {
     if (tour_included.value) {
+        includedTagsArray.push(tour_included.value.trim())
         const tag = createTags(tour_included.value.trim())
         document.querySelector('#tourIncludedTags').insertAdjacentHTML('afterbegin', tag)
         tour_included.value = '';
@@ -43,6 +47,7 @@ if (tour_included) createIncludedTag.onclick = () => {
 // Inject Tour Excluded Tags 
 if (tour_excluded) createExcludedTag.onclick = () => {
     if (tour_excluded.value) {
+        excludedTagsArray.push(tour_excluded.value.trim())
         const tag = createTags(tour_excluded.value.trim())
         document.querySelector('#tourexcludedTags').insertAdjacentHTML('afterbegin', tag)
         tour_excluded.value = '';
@@ -50,7 +55,10 @@ if (tour_excluded) createExcludedTag.onclick = () => {
 }
 // Delete Tour Tags
 if (tagscontainer) tagscontainer.onclick = (e) => {
-    e.target.closest('.deleteTag') ? e.target.closest('.deleteTag').remove() : null
+    const tag = e.target.closest('.deleteTag')?.innerText.trim();
+    includedTagsArray = includedTagsArray.filter(currentTag => currentTag != tag)
+    excludedTagsArray = excludedTagsArray.filter(currentTag => currentTag != tag)
+    if (e.target.closest('.deleteTag')) e.target.closest('.deleteTag').remove()
 }
 
 // It's reset the Form State
@@ -59,13 +67,14 @@ ResetForm.onclick = () => {
     Formbtn.id = 'submitForm';
     dataID.value = '';
     ErrorAlert.style.display = 'none';
+    previewImg.style.display = 'block';
     previewImg.src = '/assets/images/upload_area.png';
-
     if (SelectBox) SelectBox.childNodes.forEach(option => {
         option.value !== 'category' ? option.selected = false : null
     })
+    if (previewMultipleImage) previewMultipleImage.innerHTML = '';
     if (description) description.innerHTML = ''; // This will clear the content of the editor
-} 
+}
 
 // Handle Form POST and PUT Operation
 Formbtn.onsubmit = async (e) => {
@@ -74,12 +83,16 @@ Formbtn.onsubmit = async (e) => {
     const url = Formbtn.id === 'submitForm' ? `${server_url}/${EndURL}` : `${server_url}/${EndURL}/${dataID.value}`;
     const formData = new FormData(e.target)
 
+    // Create Post
     if (EndURL === 'api/post') {
         formData.append('post_slug', createSlug(`${slug.value}`))
         formData.append('description', description.getHTML())
     }
+    // Create Tour
     if (EndURL === 'api/tour') {
-        formData.append('slug',createSlug(`${slug.value}`))
+        formData.append('product_excluded', excludedTagsArray)
+        formData.append('product_included', includedTagsArray)
+        formData.append('slug', createSlug(`${slug.value}`))
         formData.append('description', description.getHTML())
         formData.append('travelling_plan', travellingPlan.getHTML())
     }
@@ -106,7 +119,7 @@ Formbtn.onsubmit = async (e) => {
         }
         if (tours_table) {
             tours_table.innerHTML = '';
-            // printToursData()
+            printToursData()
         }
         FormLoader.style.display = 'none';
     }
@@ -262,13 +275,48 @@ async function printPosts() {
                         class="btn btn-danger delete">Delete</button>
                 </div>
                 </td>
-        </tr>
-        `).join('')
+        </tr>`).join('')
     if (posts_table) posts_table.insertAdjacentHTML('afterbegin', structure)
     Loader.style.display = 'none';
 }
 
+// Inject EventListener
+tours_table ? tours_table.onclick = async (e) => {
+    if (e.target.closest('.delete')) {
+        deleteDataRequestToServer(e, `${server_url}/${EndURL}/${e.target.dataset.id}`)
+    }
+    if (e.target.closest('.edit')) {
+        Formbtn.id = 'updateFormData';
+        const res = await getSingleData(`${server_url}/${EndURL}/${e.target.dataset.id}`)
+        console.log(res);
+    }
+}
+    : null
+
+
 // This Function Print the Tours Data on DOM
-// async function printToursData() {
-    
-// }
+async function printToursData() {
+    Loader.style.display = 'block';
+    const data = await getdata(`${server_url}/api/tours`)
+    const structure = data.tours?.map((tour, i) => `<tr class="table-row">
+        <th scope="row">${i + 1}</th>
+            <td>
+                <img src="${data.tour_img_url}/${tour.featured_image}"
+                    style="width: 100px; height: 100px; object-fit:cover;" alt="" loading='lazy'>
+            </td>
+            <td> ${tour.title}</td>
+            <td> ${tour.category.category_name}</td>
+            <td> ${tour.location.location_name}</td>
+            <td> ${tour.status ? 'Active' : 'Hide'}</td>
+            <td> ${tour.formattedDate}</td>
+            <td>
+                <div class="d-flex flex-column gap-3">
+                    <button type="button" data-id="${tour._id}"
+                        class="btn btn-dark edit">Edit</button>
+                    <button type="button" data-id="${tour._id}"
+                        class="btn btn-danger delete">Delete</button>
+                </div>
+                </td>
+        </tr>`).join('')
+    if (tours_table) tours_table.insertAdjacentHTML('afterbegin', structure)
+}

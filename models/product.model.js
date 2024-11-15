@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const productSchema = new mongoose.Schema({
+const tourSchema = new mongoose.Schema({
     title: {
         type: mongoose.Schema.Types.String,
         required: true,
@@ -79,4 +79,4 @@ const productSchema = new mongoose.Schema({
         required: true
     }
 })
-export default mongoose.model('tourplan', productSchema);
+export default mongoose.model('tourplan', tourSchema)

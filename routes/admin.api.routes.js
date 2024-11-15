@@ -58,10 +58,16 @@ router.route('/api/post/:id?')
 // API Routes for Tours
 router.get('/api/tours', productControllers.getAllTours)
 router.route('/api/tour/:id?')
-    .post(tour.array('product_images'), productControllers.createTour)
+    .post(tour.fields([
+        { name: 'product_images', maxCount: 4 },
+        { name: 'featured_image', maxCount: 1 },
+    ]), productControllers.createTour)
     .get(productControllers.getSingleTour)
-    .put(tour.array('product_images'), productControllers.updateTour)
+    .put(tour.fields([
+        { name: 'product_images', maxCount: 4 },
+        { name: 'featured_image', maxCount: 1 },
+    ]), productControllers.updateTour)
     .delete(productControllers.deleteTour)
 
-    
+
 export default router

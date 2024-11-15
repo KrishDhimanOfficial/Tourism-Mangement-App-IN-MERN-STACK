@@ -67,6 +67,7 @@ export const sendDataToServer = async (url, method, formData) => {
     } catch (error) {
         console.error(error)
     } finally {
+        Loader.style.display = 'none'
         FormLoader.style.display = 'none';
     }
 }
@@ -112,11 +113,10 @@ export const displayPreviewImages = (e) => {
     previewImg.style.display = 'none';
     const files = e.target.files;
 
-    if (Array.from(files).length > 5) {
+    if (Array.from(files).length > 4) {
         previewImg.style.display = 'block';
         alert.style.display = 'block';
-    }
-    else {
+    } else {
         Array.from(files).forEach(file => {
             const reader = new FileReader()
             const ImgTag = document.createElement('img')
@@ -131,8 +131,8 @@ export const displayPreviewImages = (e) => {
 }
 
 //  Function That's create Tags
-export const createTags = (tag) => {
-    const tagElement = `<div class="deleteTag btn bg-body-secondary tag">${tag}
+export const createTags = (tagName) => {
+    const tagElement = `<div class="deleteTag btn bg-body-secondary tag">${tagName}
     <button type="submit" class="btn p-0 ms-2">
     <i class="bi bi-x"></i></button></div>`
     return tagElement

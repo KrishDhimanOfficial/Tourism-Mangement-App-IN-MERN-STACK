@@ -162,7 +162,39 @@ const productControllers = {
     },
     getAllTours: async (req, res) => {
         try {
-            const tours = await tourModel.find({})
+            const tours = await tourModel.aggregate([
+                {
+                    $lookup: {
+                        from: 'tourcategories',
+                        localField: 'product_category_id',
+                        foreignField: '_id',
+                        as: 'category'
+                    }
+                },
+                { $unwind: '$category' },
+                {
+                    $lookup: {
+                        from: 'tour-locations',
+                        localField: 'product_location_id',
+                        foreignField: '_id',
+                        as: 'location'
+                    }
+                },
+                { $unwind: '$location' },
+                {
+                    $project: {
+                        title: 1, featured_image: 1, status: 1,
+                        'category.category_name': 1,
+                        'location.location_name': 1,
+                        formattedDate: {
+                            $dateToString: {
+                                format: "%Y-%m-%d",
+                                date: "$createdAt"
+                            }
+                        }
+                    }
+                }
+            ])
             if (tours) return res.status(200).json({ tours, tour_img_url: config.server_tour_img_url })
         } catch (error) {
             console.log('getAllTours : ' + error.message)
@@ -170,14 +202,30 @@ const productControllers = {
     },
     createTour: async (req, res) => {
         try {
-
+            if (!req.body || !req.files) return res.status(400).json({ error: 'All Fields Are Required' })
+            const { title, slug, product_category_id, product_location_id, deperature_date,
+                return_date, status, price, total_Seats, description, travelling_plan,
+                product_excluded, product_included } = req.body;
+            const data = await tourModel.create({
+                title, status, return_date, deperature_date,
+                featured_image: req.files['featured_image'][0].filename,
+                product_images: req.files['product_images']?.map(file => file.filename),
+                slug: slug[1], price, total_Seats, travelling_plan, description,
+                product_location_id: new Object(product_location_id),
+                product_category_id: new Object(product_category_id),
+                product_excluded, product_included,
+                createdAt: new Date()
+            })
+            if (!data) return res.status(204).json({ error: 'failed' })
+            return res.status(200).json({ message: 'successfully created' })
         } catch (error) {
             console.log('createTour : ' + error.message)
         }
     },
     getSingleTour: async (req, res) => {
         try {
-
+            const data = await tourModel.findById({ _id: req.params.id })
+            return res.status(200).json({ tour: data, tour_img_url: config.server_tour_img_url })
         } catch (error) {
             console.log('getSingleTour : ' + error.message)
         }
@@ -199,6 +247,8 @@ const productControllers = {
                     await deleteImage(`tour_images/${image}`)
                 })
                 return res.status(200).json({ message: 'successfully deleted' })
+            } else {
+                return res.status(204).json({ error: 'failed' })
             }
         } catch (error) {
             console.log('deleteTour : ' + error.message)
